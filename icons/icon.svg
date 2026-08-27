@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1f1128" />
+            <stop offset="50%" stop-color="#0b0c16" />
+            <stop offset="100%" stop-color="#2d0b1a" />
+        </linearGradient>
+        <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff758c" />
+            <stop offset="100%" stop-color="#ff2a6d" />
+        </linearGradient>
+        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f59e0b" />
+            <stop offset="100%" stop-color="#ec4899" />
+        </linearGradient>
+    </defs>
+    
+    <!-- Background -->
+    <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+    
+    <!-- Glowing Outer Ring -->
+    <circle cx="256" cy="256" r="210" fill="none" stroke="url(#ringGrad)" stroke-width="6" opacity="0.6" stroke-dasharray="15 10" />
+    
+    <!-- Heart Icon -->
+    <path d="M256 420 C256 420 80 300 80 180 C80 110 135 60 205 60 C235 60 256 80 256 80 C256 80 277 60 307 60 C377 60 432 110 432 180 C432 300 256 420 256 420 Z" fill="url(#heartGrad)" filter="drop-shadow(0 15px 30px rgba(255, 42, 109, 0.4))" />
+    
+    <!-- Sparkles -->
+    <circle cx="160" cy="140" r="10" fill="#ffffff" opacity="0.8" />
+    <circle cx="340" cy="150" r="8" fill="#ffffff" opacity="0.7" />
+    <polygon points="256,120 262,135 277,141 262,147 256,162 250,147 235,141 250,135" fill="#fef08a" />
+</svg>
