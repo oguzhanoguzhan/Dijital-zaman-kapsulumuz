@@ -368,20 +368,21 @@
     <!-- ==================================================================== -->
 
     <!-- 1. 👫 İkili Profil Seçim & PIN Giriş Modalı -->
-    <div id="profile-auth-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
-        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl relative">
-            <button data-close-modal="profile-auth-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+    <div id="profile-auth-modal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-rose-500/30 shadow-2xl relative">
+            <!-- Kapatma butonu: Sadece oturum açıkken görünür -->
+            <button id="close-profile-modal-btn" data-close-modal="profile-auth-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors hidden">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
             <!-- Adım 1: Profil Seçimi -->
             <div id="profile-select-step">
                 <div class="text-center mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30">
-                        <i data-lucide="users" class="w-7 h-7"></i>
+                    <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30 shadow-lg animate-pulse">
+                        <i data-lucide="lock" class="w-7 h-7"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white font-romantic-serif">Kim Giriş Yapıyor?</h3>
-                    <p class="text-gray-400 text-xs mt-1">Kendi profilini seçerek sürprizlerini ve kapsüllerini yönetebilirsin.</p>
+                    <p class="text-gray-300 text-xs mt-1">Zaman kapsülünü görüntülemek ve sürprizleri açmak için profilini seç sevgilim 💖</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-6">
@@ -389,32 +390,33 @@
                     <button id="select-p1-btn" class="glass-card hover:border-rose-500/50 p-5 rounded-2xl text-center flex flex-col items-center gap-2 transition-all hover:scale-105 group">
                         <span class="text-4xl block mb-1 group-hover:scale-110 transition-transform">🕶️</span>
                         <span id="profile-name-1" class="font-bold text-white text-base">Oğuzhan</span>
-                        <span class="text-[11px] text-rose-300/80 bg-rose-500/10 px-2 py-0.5 rounded-full">Giriş Yap</span>
+                        <span class="text-[11px] text-rose-300/90 bg-rose-500/20 px-2.5 py-0.5 rounded-full font-semibold">Giriş Yap</span>
                     </button>
 
                     <!-- Partner 2 Kartı -->
                     <button id="select-p2-btn" class="glass-card hover:border-pink-500/50 p-5 rounded-2xl text-center flex flex-col items-center gap-2 transition-all hover:scale-105 group">
                         <span class="text-4xl block mb-1 group-hover:scale-110 transition-transform">💖</span>
                         <span id="profile-name-2" class="font-bold text-white text-base">Gamze</span>
-                        <span class="text-[11px] text-pink-300/80 bg-pink-500/10 px-2 py-0.5 rounded-full">Giriş Yap</span>
+                        <span class="text-[11px] text-pink-300/90 bg-pink-500/20 px-2.5 py-0.5 rounded-full font-semibold">Giriş Yap</span>
                     </button>
                 </div>
 
-                <button id="logout-profile-btn" class="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-xs font-medium border border-white/5 transition-colors">
-                    Profilden Çıkış Yap (Ziyaretçi Modu)
+                <!-- Oturum Açıkken Profil Değiştir / Çıkış Yap -->
+                <button id="logout-profile-btn" class="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-300 text-xs font-medium border border-white/5 transition-colors hidden">
+                    Mevcut Oturumdan Çıkış Yap
                 </button>
             </div>
 
             <!-- Adım 2: 4 Haneli PIN Girişi -->
             <div id="pin-entry-container" class="hidden">
                 <div class="text-center mb-6">
-                    <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30 shadow-md">
                         <i data-lucide="key" class="w-6 h-6"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white font-romantic-serif mb-1">
                         <span id="pin-target-name">Profil</span> PIN Kodu
                     </h3>
-                    <p class="text-gray-400 text-xs">Birbirimizin sürprizlerini bozmamak için PIN kodunu gir sevgilim.</p>
+                    <p class="text-gray-400 text-xs">Zaman kapsülünü açmak için 4 haneli PIN kodunu gir sevgilim.</p>
                 </div>
 
                 <div class="space-y-4">
