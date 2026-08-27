@@ -39,6 +39,7 @@ class TimeCapsuleApp {
         this.setupEventListeners();
         this.startTimeLockTickers();
         this.setupRealtimeSync();
+        if (!this.currentProfile) this.openProfileModal();
     }
 
     /* 🔐 Profil Oturumunu Yükle */
@@ -237,10 +238,33 @@ class TimeCapsuleApp {
         }, 1000);
     }
 
-    /* 🖼️ Kapsülleri Render Et */
+        /* 🖼️ Kapsülleri Render Et */
     renderCapsules() {
         const gridEl = document.getElementById('capsules-grid');
         if (!gridEl) return;
+
+        // 🔒 GİRİŞ YAPILMAMIŞSA HİÇBİR KAPSÜL GÖSTERİLMEZ
+        if (!this.currentProfile) {
+            gridEl.innerHTML = `
+                <div class="col-span-full py-16 text-center glass-card rounded-3xl p-8 sm:p-12 border border-rose-500/30 bg-gradient-to-b from-rose-950/40 via-purple-950/30 to-black/40 shadow-2xl animate-fadeIn">
+                    <div class="w-20 h-20 mx-auto mb-5 rounded-3xl bg-rose-500/20 text-rose-400 flex items-center justify-center border border-rose-500/40 shadow-lg shadow-rose-500/20 animate-pulse">
+                        <i data-lucide="lock" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-white mb-3 font-romantic-serif">
+                        Bu Zaman Kapsülü Sadece Oğuzhan & Gamze'ye Özeldir 🔒
+                    </h3>
+                    <p class="text-gray-300 text-sm sm:text-base max-w-md mx-auto mb-8 leading-relaxed">
+                        Zaman kapsülündeki mektupları, anıları, fotoğrafları ve ses kayıtlarını görmek için lütfen profilini seçip giriş yap sevgilim.
+                    </p>
+                    <button onclick="window.app.openProfileModal()" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 hover:from-rose-400 hover:to-pink-400 text-white text-base font-extrabold shadow-xl shadow-rose-500/30 transition-all hover:scale-105">
+                        <i data-lucide="key" class="w-5 h-5"></i>
+                        <span>Giriş Yap (Oğuzhan veya Gamze)</span>
+                    </button>
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+            return;
+        }
 
         const filtered = this.capsules.filter(c => {
             const isUnlocked = this.isCapsuleUnlocked(c);
@@ -733,7 +757,12 @@ class TimeCapsuleApp {
         });
     }
 
-    closeModal(modalId) {
+        closeModal(modalId) {
+        if (modalId === 'profile-auth-modal' && !this.currentProfile) {
+            // Giriş yapılmadan bu modal kapatılamaz!
+            return;
+        }
+
         if (modalId === 'content-modal' && window.voiceRecorder) {
             window.voiceRecorder.stopModalAudio();
         }
@@ -752,16 +781,33 @@ class TimeCapsuleApp {
         setTimeout(() => toast.remove(), 3500);
     }
 
-    /* 👤 Profil Seçme / PIN Girişi */
+        /* 👤 Profil Seçme / PIN Girişi */
     openProfileModal() {
         const modal = document.getElementById('profile-auth-modal');
+        if (!modal) return;
+
         const p1 = this.config.profiles.partner1;
         const p2 = this.config.profiles.partner2;
 
-        document.getElementById('profile-name-1').innerText = p1.name;
-        document.getElementById('profile-name-2').innerText = p2.name;
-        document.getElementById('pin-entry-container').classList.add('hidden');
-        document.getElementById('profile-select-step').classList.remove('hidden');
+        const p1El = document.getElementById('profile-name-1');
+        const p2El = document.getElementById('profile-name-2');
+        if (p1El) p1El.innerText = p1.name;
+        if (p2El) p2El.innerText = p2.name;
+
+        document.getElementById('pin-entry-container')?.classList.add('hidden');
+        document.getElementById('profile-select-step')?.classList.remove('hidden');
+
+        // Oturum durumuna göre butonları göster/gizle
+        const closeBtn = document.getElementById('close-profile-modal-btn');
+        const logoutBtn = document.getElementById('logout-profile-btn');
+
+        if (this.currentProfile) {
+            if (closeBtn) closeBtn.classList.remove('hidden');
+            if (logoutBtn) logoutBtn.classList.remove('hidden');
+        } else {
+            if (closeBtn) closeBtn.classList.add('hidden');
+            if (logoutBtn) logoutBtn.classList.add('hidden');
+        }
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -801,7 +847,6 @@ class TimeCapsuleApp {
 
             this.updateProfileUI();
             if (window.fortuneManager) window.fortuneManager.updateFortuneUI(this.currentProfile);
-            if (window.bucketListManager) window.bucketListManager.render();
             this.closeModal('profile-auth-modal');
             this.renderCapsules();
             this.showToast(`Hoş geldin ${this.currentProfile.name}! 🕶️`);
@@ -822,10 +867,9 @@ class TimeCapsuleApp {
         localStorage.removeItem('active_profile_id');
         this.updateProfileUI();
         if (window.fortuneManager) window.fortuneManager.updateFortuneUI(this.currentProfile);
-        if (window.bucketListManager) window.bucketListManager.render();
-        this.closeModal('profile-auth-modal');
         this.renderCapsules();
-        this.showToast("Profil çıkışı yapıldı.");
+        this.showToast("Oturum kapatıldı.");
+        this.openProfileModal();
     }
 
     /* ➕ Yeni Kapsül Ekleme veya Düzenleme */

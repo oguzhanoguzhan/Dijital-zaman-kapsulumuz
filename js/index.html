@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#e11d48">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Zaman Kapsülü">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+
+    <title>Oğuzhan & Gamze 💖</title>
+    <meta name="description" content="Sonsuza dek sürecek aşkımız ✨">
+    
+    <!-- Open Graph (WhatsApp / Telegram / Instagram Önizleme) -->
+    <meta property="og:title" content="Oğuzhan & Gamze 💖">
+    <meta property="og:description" content="Sonsuza dek sürecek aşkımız ✨">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        romantic: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons & Canvas Confetti -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="relative min-h-screen pb-20 selection:bg-rose-500/30 selection:text-white">
+
+    <!-- 🌌 Romantik Aurora Arka Plan Işıkları -->
+    <div class="romantic-aurora">
+        <div class="aurora-orb aurora-1"></div>
+        <div class="aurora-orb aurora-2"></div>
+        <div class="aurora-orb aurora-3"></div>
+    </div>
+
+    <!-- ✨ Etkileşimli Parçacık Tuvali -->
+    <canvas id="particles-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+    <!-- 🌟 Ana Kapsayıcı -->
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+        <!-- 🧭 Üst Navigasyon: Profil, Senkronizasyon & Müzik Barı -->
+        <header class="flex flex-wrap items-center justify-between gap-3 py-4 mb-6">
+            
+            <!-- Sol: Senkronizasyon Rozeti -->
+            <div id="sync-status-badge" class="glass-panel px-3 py-1.5 rounded-full flex items-center gap-2 text-xs border border-white/10 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                <span class="text-gray-300">Bağlanıyor...</span>
+            </div>
+
+            <!-- Sağ Aksiyonlar: Müzik Çalar, Anı Ekle & Profil Butonu -->
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <!-- Romantik Müzik Çalar -->
+                <button id="toggle-music-btn" class="glass-panel hover:border-rose-500/50 px-3.5 py-2 rounded-2xl flex items-center gap-2.5 transition-all duration-300 text-xs sm:text-sm text-gray-200 group shadow-lg">
+                    <div id="music-eq" class="flex items-end gap-1 h-4 music-paused">
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                    </div>
+                    <span id="music-status-text" class="font-medium group-hover:text-rose-300 hidden sm:inline">Müzik 🎵</span>
+                </button>
+
+                <!-- Yeni Hayal Ekle Butonu -->
+                <button id="header-add-dream-btn" onclick="if (window.bucketListManager) { document.getElementById('tab-btn-bucket')?.click(); window.bucketListManager.openAddModal(); }" class="glass-panel hover:bg-cyan-500/20 px-3.5 py-2 rounded-2xl flex items-center gap-2 transition-all duration-300 text-xs sm:text-sm text-cyan-300 border-cyan-500/30 font-medium" title="Yeni Bir Ortak Hayal Ekle">
+                    <span class="text-sm">🎯</span>
+                    <span>Hayal Ekle</span>
+                </button>
+
+                <!-- Yeni Sürpriz / Anı Ekle Butonu -->
+                <button id="open-add-memory-btn" class="glass-panel hover:bg-rose-500/20 px-3.5 py-2 rounded-2xl flex items-center gap-2 transition-all duration-300 text-xs sm:text-sm text-rose-300 border-rose-500/30 font-medium" title="Yeni Anı veya Sürpriz Kapsülü Ekle">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i>
+                    <span>Sürpriz Ekle</span>
+                </button>
+
+                <!-- 👫 İkili Profil Giriş / Değiştir Butonu -->
+                <button id="active-profile-btn" class="glass-panel px-3.5 py-2 rounded-2xl flex items-center gap-2 border border-white/10 text-gray-200 text-xs sm:text-sm shadow-lg hover:border-rose-400 transition-all font-medium">
+                    <span id="active-profile-avatar" class="text-base">💖</span>
+                    <span id="active-profile-name">Profil Seç</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                </button>
+            </div>
+        </header>
+
+                <!-- 🥠 Sürpriz Aşk Kurabiyesi Bildirim Alanı (Haftada 3 Gün) -->
+        <div id="fortune-banner-container" class="hidden mb-8">
+            <button id="fortune-banner-btn" class="w-full glass-panel hover:border-amber-400/50 p-4 sm:p-5 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-950/40 via-purple-950/30 to-rose-950/40 shadow-2xl flex flex-wrap items-center justify-between gap-3 text-left group transition-all duration-300 hover:scale-[1.01]">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-2xl border border-amber-500/30 group-hover:rotate-12 transition-transform shadow-md animate-cookie-float">
+                        🥠
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">Sürpriz Aşk Kurabiyesi</span>
+                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                        </div>
+                        <h4 class="text-white font-bold text-sm sm:text-base font-romantic-serif mt-0.5">
+                            Bugün sana özel bir aşk görevi belirdi! Kırmak için tıkla ✨
+                        </h4>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="fortune-banner-timer" class="text-xs text-gray-300 bg-black/40 px-3 py-1.5 rounded-xl border border-white/5">
+                        <span>Kalan Süre: --:--:--</span>
+                    </div>
+                    <span class="py-2 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center gap-1">
+                        <span>Kurabiyeyi Kır</span> <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    </span>
+                </div>
+            </button>
+        </div>
+
+        <!-- 💖 Hero Başlık & Romantik Sayaç -->
+        <section class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-rose-500/20 to-purple-500/20 border border-rose-500/30 mb-4 animate-heart-pulse shadow-2xl">
+                <i data-lucide="heart" class="w-8 h-8 text-rose-400 fill-rose-500"></i>
+            </div>
+
+            <h1 id="main-title" class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-3 font-romantic-serif bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-pink-100 to-purple-200">
+                İkimizin Zaman Kapsülü
+            </h1>
+            
+            <p id="main-subtitle" class="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto mb-8 font-light leading-relaxed">
+                Zaman akıp gitse de kalbimizdeki en özel anlar burada sonsuza dek saklı...
+            </p>
+
+            <!-- ⏳ Canlı Birliktelik Sayacı Kartları -->
+            <div class="glass-panel max-w-2xl mx-auto rounded-3xl p-5 sm:p-6 border border-white/10 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent"></div>
+                
+                <div class="text-xs uppercase tracking-widest text-rose-300/90 font-semibold mb-4 flex items-center justify-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-rose-400"></i>
+                    <span>Birlikte Geçirdiğimiz Her Güzel Saniye</span>
+                    <i data-lucide="sparkles" class="w-4 h-4 text-rose-400"></i>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center">
+                    <div class="bg-black/30 rounded-2xl p-2.5 sm:p-3.5 border border-white/5">
+                        <span id="love-days" class="block text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300 font-mono">0</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-medium">Gün</span>
+                    </div>
+                    <div class="bg-black/30 rounded-2xl p-2.5 sm:p-3.5 border border-white/5">
+                        <span id="love-hours" class="block text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300 font-mono">00</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-medium">Saat</span>
+                    </div>
+                    <div class="bg-black/30 rounded-2xl p-2.5 sm:p-3.5 border border-white/5">
+                        <span id="love-mins" class="block text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300 font-mono">00</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-medium">Dakika</span>
+                    </div>
+                    <div class="bg-black/30 rounded-2xl p-2.5 sm:p-3.5 border border-white/5">
+                        <span id="love-secs" class="block text-2xl sm:text-4xl font-extrabold text-rose-400 font-mono">00</span>
+                        <span class="text-[10px] sm:text-xs text-rose-300/80 uppercase tracking-wider font-medium">Saniye</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 📑 Ana Sekme Değiştirici: Zaman Kapsülleri & Ortak Hayal Listesi -->
+        <div class="flex items-center justify-center gap-3 mb-8">
+            <div class="glass-panel p-1.5 rounded-2xl border border-white/10 flex items-center gap-2 max-w-lg w-full shadow-2xl">
+                <button id="tab-btn-capsules" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 bg-rose-500 text-white shadow-lg shadow-rose-500/25">
+                    <span>💌 Zaman Kapsülleri</span>
+                </button>
+                <button id="tab-btn-bucket" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10">
+                    <span>🎯 Hayal Listesi</span>
+                    <span id="tab-bucket-badge" class="text-[10px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full font-mono font-normal">0 Hayal</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- 💌 1. BÖLÜM: ZAMAN KAPSÜLLERİ ALANI -->
+        <!-- ==================================================================== -->
+        <div id="capsules-section-wrapper">
+            <!-- 🔍 Filtreler & Arama Barı -->
+            <section class="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Kategori Filtre Butonları -->
+                <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+                    <button data-filter="all" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-rose-500 text-white shadow-lg shadow-rose-500/20 whitespace-nowrap">
+                        Tüm Kapsüller
+                    </button>
+                    <button data-filter="my_capsules" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white whitespace-nowrap">
+                        Benim Hazırladıklarım ✨
+                    </button>
+                    <button data-filter="question" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white whitespace-nowrap">
+                        Soru Kilitli 🔒
+                    </button>
+                    <button data-filter="time" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white whitespace-nowrap">
+                        Zaman Kilitli ⏳
+                    </button>
+                </div>
+
+                <!-- Arama & Sabırsız Aşık Modu -->
+                <div class="flex items-center gap-2 w-full md:w-auto">
+                    <div class="relative flex-1 md:w-64">
+                        <input 
+                            type="text" 
+                            id="search-capsules-input" 
+                            placeholder="Anılarda ara..." 
+                            class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 pl-9 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none focus:border-rose-500 transition-colors"
+                        >
+                        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                    </div>
+
+                    <button id="preview-mode-toggle" class="glass-panel px-3 py-2 rounded-xl text-xs text-gray-300 hover:text-white flex items-center gap-1.5 whitespace-nowrap transition-colors" title="Test amaçlı tüm kilitleri önizle">
+                        <i data-lucide="eye-off" class="w-4 h-4 text-gray-400"></i>
+                        <span class="hidden sm:inline">Sabırsız Mod</span>
+                    </button>
+
+                    <button onclick="window.fortuneManager?.forceOpenCookie()" class="glass-panel hover:bg-amber-500/20 px-3 py-2 rounded-xl text-xs text-amber-300 hover:text-amber-200 border-amber-500/30 flex items-center gap-1.5 whitespace-nowrap transition-colors" title="Sürpriz Aşk Kurabiyesi Aç">
+                        <span>🥠</span>
+                        <span class="hidden sm:inline">Kurabiye Aç</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 📦 Kapsül Kartları Izgarası (Grid) -->
+            <main id="capsules-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16">
+                <!-- JavaScript tarafından dinamik doldurulur -->
+            </main>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- 🎯 2. BÖLÜM: ORTAK HAYAL LİSTESİ (BUCKET LIST) ALANI -->
+        <!-- ==================================================================== -->
+        <section id="bucket-list-section" class="hidden mb-16 animate-fadeIn">
+            <!-- 🎯 Hayal Listesi İlerleme & Başlık Kartı -->
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl mb-8 relative overflow-hidden">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
+                
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-6">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="text-xs uppercase tracking-widest text-cyan-300 font-bold bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20 flex items-center gap-1.5">
+                                <span>🎯</span> Ortak Hayal Listemiz (Bucket List)
+                            </span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white font-romantic-serif">
+                            Birlikte Gerçekleştireceğimiz Hayallerimiz ✨
+                        </h2>
+                        <p id="bucket-progress-message" class="text-xs sm:text-sm text-gray-300 mt-1.5 leading-relaxed">
+                            Birlikte gerçekleştirmek istediğiniz ilk hayali ekleyin ✨
+                        </p>
+                    </div>
+
+                    <!-- Yeni Hayal Ekle Butonu -->
+                    <button id="open-add-dream-btn" onclick="window.bucketListManager?.openAddModal()" class="shrink-0 py-3 px-5 rounded-2xl bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-cyan-500/25 flex items-center gap-2 transition-all duration-300 hover:scale-105">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Yeni Hayal Ekle</span>
+                    </button>
+                </div>
+
+                <!-- İlerleme Çubuğu & İstatistikler -->
+                <div class="space-y-3 bg-black/30 rounded-2xl p-4 sm:p-5 border border-white/5">
+                    <div class="flex items-center justify-between text-xs sm:text-sm">
+                        <span class="text-gray-300 font-medium flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
+                            <span>Tamamlanma Oranı</span>
+                        </span>
+                        <span id="bucket-stat-percent" class="font-extrabold text-cyan-300 font-mono text-base sm:text-lg">%0</span>
+                    </div>
+
+                    <!-- Glowing Progress Bar -->
+                    <div class="w-full h-3.5 bg-black/60 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner">
+                        <div id="bucket-progress-bar" class="h-full rounded-full bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 transition-all duration-700 shadow-[0_0_12px_rgba(6,182,212,0.5)]" style="width: 0%;"></div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 pt-2 text-center text-xs">
+                        <div class="bg-white/5 rounded-xl p-2 border border-white/5">
+                            <span class="text-gray-400 block text-[11px]">Toplam Hayal</span>
+                            <span id="bucket-stat-total" class="text-white font-bold text-sm sm:text-base font-mono">0</span>
+                        </div>
+                        <div class="bg-emerald-500/10 rounded-xl p-2 border border-emerald-500/20">
+                            <span class="text-emerald-300 block text-[11px]">Gerçekleşen 🎉</span>
+                            <span id="bucket-stat-completed" class="text-emerald-400 font-bold text-sm sm:text-base font-mono">0</span>
+                        </div>
+                        <div class="bg-amber-500/10 rounded-xl p-2 border border-amber-500/20">
+                            <span class="text-amber-300 block text-[11px]">Bekleyen ⏳</span>
+                            <span id="bucket-stat-pending" class="text-amber-400 font-bold text-sm sm:text-base font-mono">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 🔍 Hayal Listesi Filtreler & Arama -->
+            <div class="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Sadece Durum Filtre Butonları -->
+                <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+                    <button data-bucket-filter="all" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-rose-500 text-white shadow-lg shadow-rose-500/20 whitespace-nowrap">
+                        Tüm Hayaller ✨
+                    </button>
+                    <button data-bucket-filter="pending" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white whitespace-nowrap">
+                        Bekleyenler ⏳
+                    </button>
+                    <button data-bucket-filter="completed" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white whitespace-nowrap">
+                        Gerçekleşenler 🎉
+                    </button>
+                </div>
+
+                <!-- Arama -->
+                <div class="relative w-full md:w-64">
+                    <input 
+                        type="text" 
+                        id="search-bucket-input" 
+                        placeholder="Hayallerde ara..." 
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 pl-9 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500 transition-colors"
+                    >
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                </div>
+            </div>
+
+            <!-- 📋 Hayal Kartları Izgarası (Grid) -->
+            <div id="bucket-list-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JavaScript tarafından doldurulur -->
+            </div>
+        </section>
+
+        <!-- 📜 Alt Bilgi -->
+        <footer class="text-center pt-8 border-t border-white/5 text-gray-400 text-xs sm:text-sm">
+            <p class="font-romantic-serif italic text-rose-300/80 mb-3 text-base">
+                "Seninle geçen her saniye, ömrümün en kıymetli hazinesi..."
+            </p>
+            <p class="text-[11px] text-gray-400">Sevgiyle & sonsuz aşkla hazırlandı ❤️</p>
+        </footer>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 🪟 MODALLAR & DİYALOGLAR -->
+    <!-- ==================================================================== -->
+
+    <!-- 1. 👫 İkili Profil Seçim & PIN Giriş Modalı -->
+    <div id="profile-auth-modal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-rose-500/30 shadow-2xl relative">
+            <!-- Kapatma butonu: Sadece oturum açıkken görünür -->
+            <button id="close-profile-modal-btn" data-close-modal="profile-auth-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors hidden">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Adım 1: Profil Seçimi -->
+            <div id="profile-select-step">
+                <div class="text-center mb-6">
+                    <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30 shadow-lg animate-pulse">
+                        <i data-lucide="lock" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-romantic-serif">Kim Giriş Yapıyor?</h3>
+                    <p class="text-gray-300 text-xs mt-1">Zaman kapsülünü görüntülemek ve sürprizleri açmak için profilini seç sevgilim 💖</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <!-- Partner 1 Kartı -->
+                    <button id="select-p1-btn" class="glass-card hover:border-rose-500/50 p-5 rounded-2xl text-center flex flex-col items-center gap-2 transition-all hover:scale-105 group">
+                        <span class="text-4xl block mb-1 group-hover:scale-110 transition-transform">🕶️</span>
+                        <span id="profile-name-1" class="font-bold text-white text-base">Oğuzhan</span>
+                        <span class="text-[11px] text-rose-300/90 bg-rose-500/20 px-2.5 py-0.5 rounded-full font-semibold">Giriş Yap</span>
+                    </button>
+
+                    <!-- Partner 2 Kartı -->
+                    <button id="select-p2-btn" class="glass-card hover:border-pink-500/50 p-5 rounded-2xl text-center flex flex-col items-center gap-2 transition-all hover:scale-105 group">
+                        <span class="text-4xl block mb-1 group-hover:scale-110 transition-transform">💖</span>
+                        <span id="profile-name-2" class="font-bold text-white text-base">Gamze</span>
+                        <span class="text-[11px] text-pink-300/90 bg-pink-500/20 px-2.5 py-0.5 rounded-full font-semibold">Giriş Yap</span>
+                    </button>
+                </div>
+
+                <!-- Oturum Açıkken Profil Değiştir / Çıkış Yap -->
+                <button id="logout-profile-btn" class="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-300 text-xs font-medium border border-white/5 transition-colors hidden">
+                    Mevcut Oturumdan Çıkış Yap
+                </button>
+            </div>
+
+            <!-- Adım 2: 4 Haneli PIN Girişi -->
+            <div id="pin-entry-container" class="hidden">
+                <div class="text-center mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30 shadow-md">
+                        <i data-lucide="key" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white font-romantic-serif mb-1">
+                        <span id="pin-target-name">Profil</span> PIN Kodu
+                    </h3>
+                    <p class="text-gray-400 text-xs">Zaman kapsülünü açmak için 4 haneli PIN kodunu gir sevgilim.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <input 
+                        type="password" 
+                        id="profile-pin-input" 
+                        maxlength="6" 
+                        placeholder="••••" 
+                        class="w-full bg-white/5 border border-white/15 rounded-2xl py-3.5 text-center text-2xl tracking-[0.5em] text-white font-mono focus:outline-none focus:border-rose-400 shadow-inner"
+                    >
+                    <p id="pin-error-text" class="text-rose-400 text-xs text-center hidden"></p>
+
+                    <div class="flex gap-2">
+                        <button id="back-to-profiles-btn" class="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-medium border border-white/10">
+                            Geri
+                        </button>
+                        <button id="verify-pin-btn" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-semibold text-sm shadow-lg shadow-rose-500/30">
+                            Doğrula & Giriş Yap
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ➕ Yeni Anı / Sürpriz Kapsülü Ekleme & Düzenleme Modalı -->
+    <div id="add-memory-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop overflow-y-auto">
+        <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <button data-close-modal="add-memory-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Modal Başlık & Yazar Bilgisi -->
+            <div class="mb-5">
+                <h3 id="add-modal-title" class="text-xl font-bold text-white font-romantic-serif flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-rose-400"></i> Yeni Anı / Sürpriz Kapsülü
+                </h3>
+                <div class="text-xs text-gray-400 mt-1 flex items-center gap-1.5">
+                    <span>Yazar:</span> 
+                    <span id="author-display-name" class="text-rose-300 font-semibold bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">Oğuzhan</span>
+                </div>
+            </div>
+
+                        <form id="add-memory-form" class="space-y-4 text-xs sm:text-sm">
+                <!-- Başlık -->
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Kapsül Başlığı *</label>
+                    <input type="text" id="new-title" required placeholder="Örn: 28 Şubat Akşamı & İlk Günümüz" class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-rose-500">
+                </div>
+
+                <!-- Kapsül Türü & Hedef Kitle -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1">Kapsül Türü</label>
+                        <select id="new-type" class="w-full bg-[#12162d] border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-rose-500">
+                            <option value="open">Açık Kapsül (Hemen Açılır)</option>
+                            <option value="question">Soru Kilitli 🔒</option>
+                            <option value="time">Zaman Kilitli ⏳</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1">Hedef Kitle</label>
+                        <select id="new-target-user" class="w-full bg-[#12162d] border border-white/10 rounded-xl px-3.5 py-2.5 text-rose-300 font-medium focus:outline-none focus:border-rose-500">
+                            <option value="both">İkimiz İçin Ortak Anı 👫</option>
+                            <option value="partner">Sevgilime Özel Sürpriz 🎁</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tarih Etiketi -->
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Tarih Etiketi</label>
+                    <input type="text" id="new-datelabel" placeholder="Örn: 28 Şubat 2025" class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-rose-500">
+                </div>
+
+                <!-- 📸 Doğrudan Fotoğraf Yükleme (PC & Mobil Galeri) -->
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1.5 flex items-center justify-between">
+                        <span class="flex items-center gap-1.5">
+                            <i data-lucide="image" class="w-4 h-4 text-rose-400"></i> Anı Fotoğrafları Yükle
+                        </span>
+                        <span class="text-[11px] text-gray-400">Telefon Galerisi / PC Dosyaları</span>
+                    </label>
+
+                    <!-- Gizli Dosya Seçici Input -->
+                    <input type="file" id="form-photo-file-input" accept="image/*" multiple class="hidden">
+
+                    <!-- Sürükle Bırak / Dosya Seçme Kutusu -->
+                    <div id="photo-drop-zone" class="border-2 border-dashed border-white/15 hover:border-rose-500/50 rounded-2xl p-5 text-center bg-white/5 transition-all">
+                        <button type="button" id="trigger-photo-upload-btn" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-500/20 via-purple-500/20 to-pink-500/20 hover:from-rose-500/30 hover:to-pink-500/30 text-rose-200 border border-rose-500/30 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-sm">
+                            <i data-lucide="upload" class="w-4 h-4 text-rose-400"></i>
+                            <span>📸 Fotoğraf Seç / Yükle (Galeri & Dosyalar)</span>
+                        </button>
+                        <p class="text-[11px] text-gray-400 mt-2">Telefonunuzdan veya bilgisayarınızdan birden fazla fotoğraf seçebilirsiniz.</p>
+                        
+                        <!-- Yükleniyor Spinner -->
+                        <div id="photo-upload-loading" class="hidden mt-2 text-xs text-rose-300 flex items-center justify-center gap-1.5">
+                            <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                            <span>Fotoğraflar optimize ediliyor...</span>
+                        </div>
+                    </div>
+
+                    <!-- Seçilen Fotoğrafların Canlı Önizleme Küçük Resimleri -->
+                    <div id="photo-thumbnails-container" class="hidden flex items-center gap-2 overflow-x-auto py-2.5 mt-2 scrollbar-none"></div>
+                </div>
+
+                <!-- Şifreli/Soru Kilit Ayarları -->
+                <div id="form-question-fields" class="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-3 hidden">
+                    <div class="text-xs font-semibold text-rose-300 flex items-center gap-1">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Soru Kilit Ayarları
+                    </div>
+                    <input type="text" id="new-question" placeholder="Soru: İlk ne zaman sarılmıştık?" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="new-answers" placeholder="Cevaplar (virgülle): sahil, kordon" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white">
+                    <input type="text" id="new-hint" placeholder="İpucu: Deniz kenarındaydık..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white">
+                </div>
+
+                <!-- Zaman Kilit Ayarı -->
+                <div id="form-time-fields" class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 hidden">
+                    <label class="block text-xs font-semibold text-amber-300 mb-1 flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i> Açılış Tarihi & Saati
+                    </label>
+                    <input type="datetime-local" id="new-targetdate" class="w-full bg-[#12162d] border border-white/10 rounded-xl px-3 py-2 text-white">
+                </div>
+
+                <!-- Özet Açıklama -->
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Özet Açıklama</label>
+                    <input type="text" id="new-summary" placeholder="Kartın üzerinde görünecek kısa not..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-rose-500">
+                </div>
+
+                <!-- 🎙️ Ses Kaydı / Sesli Mesaj Alanı -->
+                <div class="p-4 rounded-2xl bg-gradient-to-r from-rose-950/40 via-purple-950/30 to-pink-950/40 border border-rose-500/25">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-semibold text-rose-300 flex items-center gap-1.5">
+                            <i data-lucide="mic" class="w-4 h-4 text-rose-400"></i> Sesli Mesaj Ekle (Opsiyonel)
+                        </label>
+                        <span class="text-[10px] text-gray-400">Max: 3 dk</span>
+                    </div>
+
+                    <!-- Durum 1: Boş / Kayda Hazır -->
+                    <div id="voice-record-idle" class="flex items-center gap-2">
+                        <button type="button" id="start-voice-record-btn" class="flex-1 py-2.5 px-4 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-300 hover:text-rose-200 border border-white/10 hover:border-rose-500/40 text-xs font-medium transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                            <span>🎙️ Ses Kaydetmeye Başla</span>
+                        </button>
+                    </div>
+
+                    <!-- Durum 2: Kayıt Yapılıyor -->
+                    <div id="voice-record-active" class="hidden flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-rose-500/30">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500 animate-record-blink"></span>
+                            <span class="text-xs text-rose-300 font-semibold font-mono" id="voice-record-timer">00:00</span>
+                            <span class="text-[11px] text-gray-400 hidden sm:inline">Kayıt yapılıyor...</span>
+                        </div>
+                        <button type="button" id="stop-voice-record-btn" class="py-1.5 px-3 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold flex items-center gap-1 transition-all shadow-md">
+                            <i data-lucide="square" class="w-3 h-3 fill-current"></i> Kaydı Bitir
+                        </button>
+                    </div>
+
+                    <!-- Durum 3: Kayıt Tamamlandı (Önizleme) -->
+                    <div id="voice-record-preview" class="hidden flex items-center justify-between p-2 rounded-xl bg-black/40 border border-emerald-500/30">
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="preview-audio-play-btn" class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center hover:bg-emerald-500/30 transition-colors">
+                                <i data-lucide="play" class="w-4 h-4"></i>
+                            </button>
+                            <audio id="form-preview-audio" class="hidden"></audio>
+                            <span class="text-xs text-emerald-300 font-medium">✨ Ses Kaydı Hazır!</span>
+                        </div>
+                        <button type="button" id="delete-voice-record-btn" class="p-1.5 rounded-lg bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 text-xs transition-colors" title="Kaydı Sil & Yeniden Başla">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Romantik Mektup -->
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Romantik Mektup / Detaylı Anı Metni</label>
+                    <textarea id="new-letter" rows="4" placeholder="Canım sevgilim..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-rose-500"></textarea>
+                </div>
+
+                <!-- Kaydet Butonu -->
+                <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-bold text-sm transition-all shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2">
+                    <span>Kapsülü Kaydet</span> <i data-lucide="heart" class="w-4 h-4 fill-current"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. ❓ Soru Kilit Modalı -->
+    <div id="question-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
+        <div id="question-modal-box" class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative">
+            <button data-close-modal="question-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-4 border border-rose-500/30">
+                <i data-lucide="lock" class="w-7 h-7"></i>
+            </div>
+
+            <h3 class="text-xl font-bold text-white text-center mb-2 font-romantic-serif">
+                Bu Kapsül Şifreli! 🗝️
+            </h3>
+            <p id="modal-question-text" class="text-rose-200 text-center text-sm mb-6 leading-relaxed">
+                İlk buluştuğumuz kafenin adı neydi?
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <input 
+                        type="text" 
+                        id="modal-answer-input" 
+                        placeholder="Cevabını buraya yaz sevgilim..." 
+                        class="w-full bg-white/5 border border-white/15 rounded-2xl px-4 py-3 text-white text-center text-sm placeholder-gray-400 focus:outline-none focus:border-rose-400 transition-all shadow-inner"
+                        autocomplete="off"
+                    >
+                    <p id="modal-answer-error" class="text-rose-400 text-xs text-center mt-2 hidden"></p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button id="toggle-hint-btn" type="button" class="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-medium border border-white/10 transition-colors flex items-center justify-center gap-1">
+                        <i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-400"></i> İpucu
+                    </button>
+                    <button id="submit-answer-btn" type="button" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-medium text-sm transition-all shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2">
+                        <span>Kilidi Aç</span> <i data-lucide="key" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div id="hint-container" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs text-center">
+                    💡 <strong>İpucu:</strong> <span id="modal-question-hint"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ⌛ Zaman Kilitli Bilgi Modalı -->
+    <div id="timelock-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative text-center">
+            <button data-close-modal="timelock-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4 border border-amber-500/30 animate-pulse">
+                <i data-lucide="hourglass" class="w-7 h-7"></i>
+            </div>
+
+            <h3 id="timelock-title" class="text-xl font-bold text-white mb-2 font-romantic-serif">
+                Geleceğe Kilitli Kapsül
+            </h3>
+            <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+                Bu kapsülün içindeki sürpriz mektup ve anılar sadece belirlenen vakit geldiğinde kendiliğinden açılacak.
+            </p>
+
+            <div class="p-4 rounded-2xl bg-white/5 border border-white/10 mb-6">
+                <span class="text-xs text-gray-400 block mb-1">Açılış Tarihi:</span>
+                <span id="timelock-date" class="text-base font-bold text-amber-300 font-mono">--</span>
+            </div>
+
+            <p class="text-xs text-rose-300/80 font-romantic-serif italic mb-6">
+                "Güzel şeyler sabırla beklenmeye değerdir..." 💖
+            </p>
+
+            <button data-close-modal="timelock-modal" class="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-sm transition-all border border-white/10">
+                Anladım, Sabırla Bekleyeceğim ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- 5. 📖 Zengin Kapsül İçerik Modalı -->
+    <div id="content-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-6 modal-backdrop overflow-y-auto">
+        <div class="glass-panel max-w-2xl w-full rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <button data-close-modal="content-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-20">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Başlık & Rozetler -->
+            <div class="mb-6">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span id="modal-capsule-author" class="bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs px-3 py-1 rounded-full font-semibold"></span>
+                    <span id="modal-capsule-date" class="text-xs text-gray-400 flex items-center gap-1 font-sans">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-rose-400"></i>
+                    </span>
+                </div>
+                <h2 id="modal-capsule-title" class="text-2xl sm:text-3xl font-bold text-white font-romantic-serif"></h2>
+            </div>
+
+
+
+                        <!-- 🎙️ Özel Sesli Mesaj Oynatıcı Kutusu -->
+            <div id="modal-voice-container" class="hidden mb-6 p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-rose-950/60 via-purple-950/50 to-pink-950/60 border border-rose-500/30 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center border border-rose-500/30">
+                            <i data-lucide="mic" class="w-4 h-4"></i>
+                        </div>
+                        <span id="modal-voice-author" class="text-xs sm:text-sm font-semibold text-rose-200">Sesli Mesaj</span>
+                    </div>
+                    
+                    <!-- Ses Dalgaları Animasyonu -->
+                    <div id="modal-voice-waves" class="flex items-center gap-1 h-5 waves-paused">
+                        <span class="voice-wave-bar"></span>
+                        <span class="voice-wave-bar"></span>
+                        <span class="voice-wave-bar"></span>
+                        <span class="voice-wave-bar"></span>
+                        <span class="voice-wave-bar"></span>
+                        <span class="voice-wave-bar"></span>
+                        <span class="voice-wave-bar"></span>
+                        <span class="voice-wave-bar"></span>
+                    </div>
+                </div>
+
+                <!-- Çalma Çubuğu & Oynat Butonu -->
+                <div class="flex items-center gap-3">
+                    <button type="button" id="modal-voice-play-btn" class="w-12 h-12 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white flex items-center justify-center shadow-lg shadow-rose-500/30 transition-all hover:scale-105">
+                        <i data-lucide="play" class="w-5 h-5 ml-0.5"></i>
+                    </button>
+
+                    <div class="flex-1">
+                        <div class="w-full bg-black/50 rounded-full h-2 overflow-hidden border border-white/10 relative">
+                            <div id="modal-voice-progress" class="bg-gradient-to-r from-rose-500 to-pink-400 h-full w-0 transition-all duration-150"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-gray-400 font-mono mt-1.5">
+                            <span id="modal-voice-current-time">00:00</span>
+                            <span id="modal-voice-duration">--:--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mektup Alanı -->
+            <div class="letter-sheet p-6 sm:p-8 mb-6 text-gray-200 text-sm sm:text-base leading-relaxed font-romantic-serif whitespace-pre-line shadow-inner">
+                <div class="text-rose-400/30 text-4xl leading-none font-serif select-none mb-2">“</div>
+                <p id="modal-capsule-letter" class="relative z-10"></p>
+                <div class="text-rose-400/30 text-4xl leading-none font-serif select-none text-right mt-2">”</div>
+            </div>
+
+            <!-- Fotoğraf Galerisi -->
+            <div class="mb-6">
+                <h4 class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-3 flex items-center gap-2">
+                    <i data-lucide="image" class="w-4 h-4 text-rose-400"></i> Fotoğraf Albümü
+                </h4>
+                <div id="modal-photo-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            </div>
+
+            <!-- Özel Şarkı Widget'ı -->
+            <div id="modal-song-container" class="p-4 rounded-2xl bg-gradient-to-r from-purple-900/40 to-rose-900/40 border border-purple-500/20 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                        <i data-lucide="music" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400">Bu Anın Şarkısı</div>
+                        <div id="modal-song-title" class="text-sm font-semibold text-white"></div>
+                        <div id="modal-song-artist" class="text-xs text-rose-300"></div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400 font-romantic-serif italic">Bizim Ezgimiz 🎶</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 🔍 Lightbox / Görsel Büyütme Modalı -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-4 modal-backdrop" onclick="window.app.closeModal('lightbox-modal')">
+        <div class="max-w-4xl w-full text-center relative" onclick="event.stopPropagation()">
+            <button data-close-modal="lightbox-modal" class="absolute -top-10 right-0 text-white hover:text-rose-400 p-2">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <img id="lightbox-img" src="" alt="Büyütülmüş Görsel" class="max-h-[80vh] mx-auto rounded-2xl shadow-2xl border border-white/10 object-contain">
+            <p id="lightbox-caption" class="text-gray-300 text-sm mt-3 font-romantic-serif italic"></p>
+        </div>
+    </div>
+
+        <!-- 🥠 İnteraktif Sürpriz Aşk Kurabiyesi Modalı -->
+    <div id="fortune-cookie-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-amber-500/25 shadow-2xl relative text-center">
+            <button data-close-modal="fortune-cookie-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Durum A: Henüz Kırılmamış Kurabiye Ekranı -->
+            <div id="fortune-uncracked-view">
+                <div class="mb-4">
+                    <span class="text-xs font-semibold text-amber-300 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                        24 Saatlik Sürpriz Görev
+                    </span>
+                </div>
+                <h3 class="text-2xl font-bold text-white font-romantic-serif mb-2">
+                    Aşk Kurabiyeni Kır! 🥠
+                </h3>
+                <p class="text-gray-300 text-xs sm:text-sm mb-6 max-w-xs mx-auto leading-relaxed">
+                    İçinde bugün tamamlaman gereken çok özel ve tatlı bir çift görevi saklı.
+                </p>
+
+                <!-- Tıklanabilir 3D Kurabiye Grafiği -->
+                <div id="fortune-cookie-graphic" class="w-36 h-36 mx-auto mb-6 flex items-center justify-center cursor-pointer group relative select-none" title="Kırmak için tıkla!">
+                    <div class="text-7xl group-hover:scale-110 transition-transform duration-300 animate-cookie-float filter drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]">
+                        🥠
+                    </div>
+                </div>
+
+                <button onclick="window.fortuneManager?.crackCookie()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm transition-all shadow-xl shadow-amber-500/30 flex items-center justify-center gap-2">
+                    <span>Kurabiyeye Dokun ve Kır!</span> <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Durum B: Kırılmış Parşömen & Görev Kartı Ekranı -->
+            <div id="fortune-cracked-view" class="hidden">
+                <div class="mb-3">
+                    <span id="fortune-task-category" class="text-xs font-semibold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20"></span>
+                </div>
+
+                <!-- Altın Parşömen Kağıdı -->
+                <div class="parchment-scroll rounded-2xl p-6 mb-5 text-amber-950 text-left relative overflow-hidden">
+                    <div class="text-xs font-bold uppercase tracking-wider text-amber-800 mb-1 flex items-center gap-1">
+                        <span>📜</span> Günün Sürpriz Görevi
+                    </div>
+                    <h4 id="fortune-task-title" class="text-lg sm:text-xl font-extrabold text-amber-950 font-romantic-serif mb-2"></h4>
+                    <p id="fortune-task-desc" class="text-xs sm:text-sm text-amber-900 leading-relaxed font-sans"></p>
+                    
+                    <div class="mt-4 pt-3 border-t border-amber-600/20 flex items-center justify-between text-[11px] font-mono text-amber-800 font-semibold">
+                        <span>⏳ Tamamlama Süresi:</span>
+                        <span id="fortune-modal-timer" class="bg-amber-900/10 px-2 py-0.5 rounded">23:59:59</span>
+                    </div>
+                </div>
+
+                <!-- Görev Tamamlama Butonu -->
+                <div class="space-y-2">
+                    <button id="fortune-task-complete-btn" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-sm transition-all shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2">
+                        <span>Görevi Başarıyla Tamamladım!</span> <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    </button>
+
+                    <!-- Tamamlandı Rozeti -->
+                    <div id="fortune-completed-badge" class="hidden p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center justify-center gap-2">
+                        <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Tebrikler! Bu Görevi Başarıyla Tamamladın! 🏆</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- 📱 Telefona Uygulama Olarak Yükleme Rehberi Modalı -->
+    <div id="pwa-install-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl relative">
+            <button data-close-modal="pwa-install-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30 shadow-lg animate-pulse">
+                    <i data-lucide="smartphone" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white font-romantic-serif">Telefona Uygulama Olarak Ekle</h3>
+                <p class="text-gray-300 text-xs mt-1">App Store'dan indirmiş gibi tek tıkla ana ekranından aç sevgilim 💖</p>
+            </div>
+
+            <div class="space-y-4 mb-6 text-left">
+                <!-- iPhone / iOS Rehberi -->
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-base">🍏</span>
+                        <h4 class="text-sm font-bold text-white">iPhone (Safari):</h4>
+                    </div>
+                    <ol class="text-xs text-gray-300 space-y-1.5 list-decimal list-inside leading-relaxed">
+                        <li>Safari'nin altındaki <strong>"Paylaş"</strong> (kare içinden ok çıkan) simgesine dokunun.</li>
+                        <li>Aşağı kaydırıp <strong>"Ana Ekrana Ekle"</strong> seçeneğini seçin.</li>
+                        <li>Sağ üstteki <strong>"Ekle"</strong> butonuna basın. Artık kalpli ikonla ana ekranınızda!</li>
+                    </ol>
+                </div>
+
+                <!-- Android Rehberi -->
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-base">🤖</span>
+                        <h4 class="text-sm font-bold text-white">Android (Chrome):</h4>
+                    </div>
+                    <ol class="text-xs text-gray-300 space-y-1.5 list-decimal list-inside leading-relaxed">
+                        <li>Chrome'un sağ üstündeki <strong>üç nokta (⋮)</strong> menüsüne dokunun.</li>
+                        <li><strong>"Uygulamayı Yükle"</strong> veya <strong>"Ana Ekrana Ekle"</strong> butonuna basın.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <button data-close-modal="pwa-install-modal" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-bold text-xs shadow-lg shadow-rose-500/20 transition-all">
+                Harika, Anladım! ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- 🎯 8. Yeni Hayal Ekleme & Düzenleme Modalı -->
+    <div id="add-dream-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop overflow-y-auto animate-fadeIn">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <button data-close-modal="add-dream-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Modal Başlık -->
+            <div class="mb-5">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl mb-3 border border-cyan-500/30">
+                    🎯
+                </div>
+                <h3 id="dream-modal-title" class="text-xl font-bold text-white font-romantic-serif">
+                    Yeni Bir Ortak Hayal Ekle ✨
+                </h3>
+                <div class="text-xs text-gray-400 mt-1 flex items-center gap-1.5">
+                    <span>Ekleyen:</span> 
+                    <span id="dream-author-name" class="text-cyan-300 font-semibold bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">Oğuzhan</span>
+                </div>
+            </div>
+
+            <form id="add-dream-form" class="space-y-4 text-xs sm:text-sm">
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Hayaliniz / Planınız *</label>
+                    <input type="text" id="dream-title-input" required placeholder="Örn: Kapadokya'da Balona Binmek 🎈" class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Hedef Tarih / Dönem (İsteğe Bağlı)</label>
+                    <input type="text" id="dream-target-input" placeholder="Örn: 2026 Yazı, Ekim 2026" class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Romantik Not & Detaylar (İsteğe Bağlı)</label>
+                    <textarea id="dream-note-input" rows="2" placeholder="Gündoğumunda gökyüzünde el ele olacağız..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1.5">İlham / Anı Fotoğrafı (İsteğe Bağlı)</label>
+                    <div id="dream-photo-drop-zone" class="border-2 border-dashed border-white/20 hover:border-cyan-500/50 rounded-2xl p-4 text-center cursor-pointer transition-all bg-white/5 group">
+                        <input type="file" id="dream-photo-file-input" accept="image/*" class="hidden">
+                        
+                        <!-- Boş Durum -->
+                        <div id="dream-photo-empty-state" class="py-2">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto mb-2 border border-cyan-500/20 group-hover:scale-110 transition-transform">
+                                <i data-lucide="image-plus" class="w-5 h-5"></i>
+                            </div>
+                            <p class="text-xs text-gray-300 font-medium">Fotoğraf Yüklemek İçin Dokun</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5">Galeriden seç veya kamerayla çek 📸</p>
+                        </div>
+
+                        <!-- Önizleme Durumu -->
+                        <div id="dream-photo-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border border-white/10">
+                            <img id="dream-photo-preview-img" src="" alt="Hayal Fotoğrafı Önizleme" class="w-full h-44 object-cover">
+                            <button type="button" id="dream-photo-remove-btn" class="absolute top-2 right-2 p-1.5 rounded-full bg-red-500/80 hover:bg-red-600 text-white transition-colors shadow-lg" title="Fotoğrafı Kaldır">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2">
+                    <button type="button" data-close-modal="add-dream-modal" class="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-medium border border-white/10 transition-colors">
+                        Vazgeç
+                    </button>
+                    <button type="submit" class="py-2.5 px-5 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-cyan-500/25 transition-all">
+                        Hayali Kaydet ✨
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🎯 9. 🎉 Hayal Gerçekleşti Kutlama Modalı -->
+    <div id="celebrate-dream-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4 modal-backdrop animate-fadeIn">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 border border-emerald-500/30 bg-gradient-to-b from-[#0f1b2b] to-[#070d18] shadow-2xl relative text-center">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4 border border-emerald-500/40 text-3xl animate-bounce">
+                🎉
+            </div>
+
+            <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Tebrikler Sevgilim! ✨
+            </span>
+
+            <h3 class="text-2xl font-bold text-white font-romantic-serif mt-3 mb-2">
+                Bir Hayalimiz Daha Gerçek Oldu!
+            </h3>
+
+            <p id="celebrate-dream-title" class="text-emerald-300 font-semibold text-sm sm:text-base mb-4 bg-emerald-950/40 p-3 rounded-2xl border border-emerald-500/20">
+                Hayal Başlığı
+            </p>
+
+            <p class="text-gray-300 text-xs sm:text-sm leading-relaxed mb-5">
+                Birlikte nice güzel hayalleri gerçeğe dönüştürmek dileğiyle... İstersen bu anın hatırası için fotoğraf yükleyebilirsin:
+            </p>
+
+            <div class="mb-6 text-left">
+                <label class="block text-gray-300 text-xs font-medium mb-1.5">Bu Güzel Anın Hatıra Fotoğrafı (İsteğe Bağlı):</label>
+                <div id="celebrate-photo-drop-zone" class="border-2 border-dashed border-emerald-500/30 hover:border-emerald-500/60 rounded-2xl p-4 text-center cursor-pointer transition-all bg-emerald-950/20 group">
+                    <input type="file" id="celebrate-photo-file-input" accept="image/*" class="hidden">
+                    
+                    <!-- Boş Durum -->
+                    <div id="celebrate-photo-empty-state" class="py-2">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-2 border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                            <i data-lucide="camera" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-xs text-emerald-300 font-medium">Kutlama Fotoğrafı Seç / Çek</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">Galeriden anıyı yükle 🥂</p>
+                    </div>
+
+                    <!-- Önizleme Durumu -->
+                    <div id="celebrate-photo-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border border-emerald-500/30">
+                        <img id="celebrate-photo-preview-img" src="" alt="Kutlama Fotoğrafı" class="w-full h-44 object-cover">
+                        <button type="button" id="celebrate-photo-remove-btn" class="absolute top-2 right-2 p-1.5 rounded-full bg-red-500/80 hover:bg-red-600 text-white transition-colors shadow-lg" title="Fotoğrafı Kaldır">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="skip-celebrate-photo-btn" class="flex-1 py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-medium border border-white/10 transition-colors">
+                    Fotoğrafsız Geç
+                </button>
+                <button id="save-celebrate-photo-btn" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 transition-all">
+                    Kaydet & Kutla 🥂
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uygulama Betikleri -->
+    <script src="js/config.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/voice-recorder.js"></script>
+    <script src="js/fortune-tasks.js"></script>
+    <script src="js/image-uploader.js"></script>
+    <script src="js/bucket-list.js"></script>
+    <script src="js/app.js"></script>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('PWA Service Worker başarıyla yüklendi:', reg.scope))
+                    .catch(err => console.log('PWA Service Worker hatası:', err));
+            });
+        }
+    </script>
+</body>
+</html>
