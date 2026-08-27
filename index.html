@@ -76,7 +76,85 @@
     <canvas id="particles-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
     <!-- 🌟 Ana Kapsayıcı -->
-    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <!-- 🔒 1. TAM EKRAN GİRİŞ & KİLİT KAPISI (Giriş yapılmadan hiçbir şey görünmez) -->
+    <div id="login-gate-screen" class="relative z-20 min-h-[90vh] flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-10 border border-rose-500/30 shadow-2xl relative text-center bg-gradient-to-b from-rose-950/40 via-purple-950/30 to-[#0b0c16]/80 animate-fadeIn">
+            
+            <!-- Kalp Simgesi -->
+            <div class="w-20 h-20 mx-auto mb-4 rounded-3xl bg-rose-500/20 text-rose-400 flex items-center justify-center border border-rose-500/40 shadow-xl shadow-rose-500/20 animate-heart-pulse">
+                <i data-lucide="heart" class="w-10 h-10 fill-rose-500"></i>
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-white font-romantic-serif mb-2 bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-pink-100 to-purple-200">
+                İkimizin Zaman Kapsülü
+            </h1>
+            <p class="text-rose-300/80 text-xs sm:text-sm font-romantic-serif italic mb-6">
+                "Sonsuza dek sürecek aşkımız..." ✨
+            </p>
+
+            <!-- Adım 1: Profil Seçimi -->
+            <div id="gate-select-step">
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 mb-6">
+                    <p class="text-gray-300 text-xs sm:text-sm font-medium leading-relaxed">
+                        Bu zaman sandığı sadece <strong>Oğuzhan & Gamze</strong>'ye özeldir. İçeriği görmek için profilini seç sevgilim 💖
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-2">
+                    <!-- Oğuzhan Butonu -->
+                    <button onclick="window.app.selectProfileForLogin('partner1')" class="glass-card hover:border-rose-500/60 p-5 rounded-2xl text-center flex flex-col items-center gap-2.5 transition-all hover:scale-105 group border border-white/10 shadow-lg">
+                        <span class="text-4xl block group-hover:scale-110 transition-transform">🕶️</span>
+                        <span class="font-bold text-white text-base">Oğuzhan</span>
+                        <span class="text-[11px] text-rose-300 bg-rose-500/20 px-3 py-0.5 rounded-full font-semibold border border-rose-500/30">Giriş Yap</span>
+                    </button>
+
+                    <!-- Gamze Butonu -->
+                    <button onclick="window.app.selectProfileForLogin('partner2')" class="glass-card hover:border-pink-500/60 p-5 rounded-2xl text-center flex flex-col items-center gap-2.5 transition-all hover:scale-105 group border border-white/10 shadow-lg">
+                        <span class="text-4xl block group-hover:scale-110 transition-transform">💖</span>
+                        <span class="font-bold text-white text-base">Gamze</span>
+                        <span class="text-[11px] text-pink-300 bg-pink-500/20 px-3 py-0.5 rounded-full font-semibold border border-pink-500/30">Giriş Yap</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Adım 2: 4 Haneli PIN Girişi -->
+            <div id="gate-pin-step" class="hidden">
+                <div class="mb-5">
+                    <div class="inline-block p-2 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-semibold mb-2 border border-rose-500/30">
+                        <span id="gate-pin-target-name">Profil</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white font-romantic-serif">
+                        PIN Kodunu Gir
+                    </h3>
+                    <p class="text-gray-400 text-xs mt-1">Zaman kapsülünü açmak için 4 haneli kodunu gir sevgilim.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <input 
+                        type="password" 
+                        id="gate-pin-input" 
+                        maxlength="6" 
+                        placeholder="••••" 
+                        class="w-full bg-white/5 border border-white/20 rounded-2xl py-3.5 text-center text-3xl tracking-[0.5em] text-white font-mono focus:outline-none focus:border-rose-400 shadow-inner"
+                        onkeyup="if(event.key==='Enter') window.app.verifyProfilePIN()"
+                    >
+                    <p id="gate-pin-error" class="text-rose-400 text-xs text-center hidden"></p>
+
+                    <div class="flex gap-2.5">
+                        <button onclick="window.app.backToProfileSelect()" class="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-medium border border-white/10 transition-colors">
+                            Geri
+                        </button>
+                        <button onclick="window.app.verifyProfilePIN()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-bold text-sm shadow-lg shadow-rose-500/30 transition-all flex items-center justify-center gap-1.5">
+                            <span>Kilidi Aç</span> <i data-lucide="unlock" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 Ana İçerik Kapsayıcısı (Sadece Giriş Yapıldığında Görünür) -->
+    <div id="main-app-content" class="hidden relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
         <!-- 🧭 Üst Navigasyon: Profil, Senkronizasyon & Müzik Barı -->
         <header class="flex flex-wrap items-center justify-between gap-3 py-4 mb-6">
