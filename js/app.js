@@ -154,22 +154,27 @@ class TimeCapsuleApp {
 
     /* 👤 Profil Durumunu ve UI'ı Güncelle */
     updateProfileUI() {
+        const gateScreen = document.getElementById('login-gate-screen');
+        const mainContent = document.getElementById('main-app-content');
         const profileBtn = document.getElementById('active-profile-btn');
         const profileStatusText = document.getElementById('active-profile-name');
         const profileAvatar = document.getElementById('active-profile-avatar');
 
         if (this.currentProfile) {
+            // ✅ OTURUM AÇIK: Kilit ekranını gizle, ana siteyi aç
+            if (gateScreen) gateScreen.classList.add('hidden');
+            if (mainContent) mainContent.classList.remove('hidden');
+
             if (profileStatusText) profileStatusText.innerText = `${this.currentProfile.name} (${this.currentProfile.roleTitle})`;
             if (profileAvatar) profileAvatar.innerText = this.currentProfile.avatar;
             if (profileBtn) {
-                profileBtn.className = "glass-panel px-3.5 py-2 rounded-2xl flex items-center gap-2 border border-rose-500/40 bg-rose-500/10 text-rose-200 text-xs sm:text-sm shadow-lg hover:border-rose-400 transition-all";
+                profileBtn.className = "glass-panel px-3.5 py-2 rounded-2xl flex items-center gap-2 border border-rose-500/40 bg-rose-500/10 text-rose-200 text-xs sm:text-sm shadow-lg hover:border-rose-400 transition-all font-semibold";
             }
         } else {
-            if (profileStatusText) profileStatusText.innerText = "Giriş Yap / Profil Seç";
-            if (profileAvatar) profileAvatar.innerText = "💖";
-            if (profileBtn) {
-                profileBtn.className = "glass-panel px-3.5 py-2 rounded-2xl flex items-center gap-2 border border-white/10 text-gray-300 text-xs sm:text-sm shadow-lg hover:border-rose-400 transition-all";
-            }
+            // 🔒 OTURUM KAPALI: Ana siteyi tamamen gizle, kilit ekranını göster
+            if (mainContent) mainContent.classList.add('hidden');
+            if (gateScreen) gateScreen.classList.remove('hidden');
+            this.backToProfileSelect();
         }
     }
 
@@ -781,45 +786,21 @@ class TimeCapsuleApp {
         setTimeout(() => toast.remove(), 3500);
     }
 
-        /* 👤 Profil Seçme / PIN Girişi */
+            /* 👤 Profil Seçme & PIN Girişi */
     openProfileModal() {
-        const modal = document.getElementById('profile-auth-modal');
-        if (!modal) return;
-
-        const p1 = this.config.profiles.partner1;
-        const p2 = this.config.profiles.partner2;
-
-        const p1El = document.getElementById('profile-name-1');
-        const p2El = document.getElementById('profile-name-2');
-        if (p1El) p1El.innerText = p1.name;
-        if (p2El) p2El.innerText = p2.name;
-
-        document.getElementById('pin-entry-container')?.classList.add('hidden');
-        document.getElementById('profile-select-step')?.classList.remove('hidden');
-
-        // Oturum durumuna göre butonları göster/gizle
-        const closeBtn = document.getElementById('close-profile-modal-btn');
-        const logoutBtn = document.getElementById('logout-profile-btn');
-
-        if (this.currentProfile) {
-            if (closeBtn) closeBtn.classList.remove('hidden');
-            if (logoutBtn) logoutBtn.classList.remove('hidden');
-        } else {
-            if (closeBtn) closeBtn.classList.add('hidden');
-            if (logoutBtn) logoutBtn.classList.add('hidden');
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        // Profil değiştirme veya çıkış için kilit ekranına dön
+        this.currentProfile = null;
+        localStorage.removeItem('active_profile_id');
+        this.updateProfileUI();
     }
 
     selectProfileForLogin(profileId) {
         this.selectedProfileForLogin = this.config.profiles[profileId];
-        const step1 = document.getElementById('profile-select-step');
-        const step2 = document.getElementById('pin-entry-container');
-        const targetName = document.getElementById('pin-target-name');
-        const pinInput = document.getElementById('profile-pin-input');
-        const pinError = document.getElementById('pin-error-text');
+        const step1 = document.getElementById('gate-select-step');
+        const step2 = document.getElementById('gate-pin-step');
+        const targetName = document.getElementById('gate-pin-target-name');
+        const pinInput = document.getElementById('gate-pin-input');
+        const pinError = document.getElementById('gate-pin-error');
 
         if (targetName) targetName.innerText = `${this.selectedProfileForLogin.name} (${this.selectedProfileForLogin.roleTitle})`;
         if (pinInput) {
@@ -828,28 +809,47 @@ class TimeCapsuleApp {
         }
         if (pinError) pinError.classList.add('hidden');
 
-        step1.classList.add('hidden');
-        step2.classList.remove('hidden');
+        if (step1) step1.classList.add('hidden');
+        if (step2) step2.classList.remove('hidden');
         setTimeout(() => pinInput?.focus(), 150);
+    }
+
+    backToProfileSelect() {
+        const step1 = document.getElementById('gate-select-step');
+        const step2 = document.getElementById('gate-pin-step');
+        if (step1) step1.classList.remove('hidden');
+        if (step2) step2.classList.add('hidden');
+        this.selectedProfileForLogin = null;
     }
 
     verifyProfilePIN() {
         if (!this.selectedProfileForLogin) return;
 
-        const pinInput = document.getElementById('profile-pin-input');
-        const pinError = document.getElementById('pin-error-text');
+        const pinInput = document.getElementById('gate-pin-input');
+        const pinError = document.getElementById('gate-pin-error');
         const enteredPin = (pinInput?.value || '').trim();
 
         if (enteredPin === this.selectedProfileForLogin.pin) {
-            // Başarılı Giriş!
+            // 🎉 BAŞARILI GİRİŞ!
             this.currentProfile = this.selectedProfileForLogin;
             localStorage.setItem('active_profile_id', this.currentProfile.id);
 
+            // Müzik & Konfeti Efekti
+            if (window.romanticAudio) window.romanticAudio.playUnlockSound();
+            if (window.confetti) {
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#ff758c', '#ff7eb3', '#fbbf24', '#34d399']
+                });
+            }
+
             this.updateProfileUI();
             if (window.fortuneManager) window.fortuneManager.updateFortuneUI(this.currentProfile);
-            this.closeModal('profile-auth-modal');
+            if (window.bucketListManager) window.bucketListManager.render();
             this.renderCapsules();
-            this.showToast(`Hoş geldin ${this.currentProfile.name}! 🕶️`);
+            this.showToast(`Hoş geldin ${this.currentProfile.name}! 💖`);
         } else {
             if (pinError) {
                 pinError.innerText = 'Hatalı PIN kodu! Lütfen tekrar dene sevgilim.';
@@ -866,10 +866,7 @@ class TimeCapsuleApp {
         this.currentProfile = null;
         localStorage.removeItem('active_profile_id');
         this.updateProfileUI();
-        if (window.fortuneManager) window.fortuneManager.updateFortuneUI(this.currentProfile);
-        this.renderCapsules();
         this.showToast("Oturum kapatıldı.");
-        this.openProfileModal();
     }
 
     /* ➕ Yeni Kapsül Ekleme veya Düzenleme */
