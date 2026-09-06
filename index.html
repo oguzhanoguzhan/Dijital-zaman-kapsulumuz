@@ -1123,13 +1123,16 @@
     <script src="js/fortune-tasks.js"></script>
     <script src="js/image-uploader.js"></script>
     <script src="js/bucket-list.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/app.js?v=5"></script>
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('PWA Service Worker başarıyla yüklendi:', reg.scope))
+                navigator.serviceWorker.register('./sw.js?v=5')
+                    .then(reg => {
+                        reg.update();
+                        console.log('PWA Service Worker başarıyla yüklendi:', reg.scope);
+                    })
                     .catch(err => console.log('PWA Service Worker hatası:', err));
             });
         }

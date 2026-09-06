@@ -45,24 +45,35 @@ class TimeCapsuleApp {
     /* 🔐 Profil Oturumunu Yükle */
     loadLocalAuth() {
         try {
-            const savedProfileId = localStorage.getItem('active_profile_id');
+            // 🚨 ÖNCEDEN GİREN TÜM CİHAZLARDAKİ KALICI OTURUMLARI SİL
+            localStorage.removeItem('active_profile_id');
+            localStorage.removeItem('unlocked_capsules');
+
+            // Yalnızca aktif tarayıcı sekmesinde (sessionStorage) oturum varsa oku
+            const savedProfileId = sessionStorage.getItem('active_profile_id');
             if (savedProfileId && this.config.profiles[savedProfileId]) {
                 this.currentProfile = this.config.profiles[savedProfileId];
+            } else {
+                this.currentProfile = null;
             }
 
-            const savedUnlocked = localStorage.getItem('unlocked_capsules');
+            const savedUnlocked = sessionStorage.getItem('unlocked_capsules');
             if (savedUnlocked) {
                 this.unlockedIds = new Set(JSON.parse(savedUnlocked));
+            } else {
+                this.unlockedIds = new Set();
             }
         } catch (e) {
             console.error("Auth yüklenirken hata:", e);
+            this.currentProfile = null;
+            this.unlockedIds = new Set();
         }
         this.updateProfileUI();
         if (window.fortuneManager) window.fortuneManager.updateFortuneUI(this.currentProfile);
     }
 
     saveUnlockedState() {
-        localStorage.setItem('unlocked_capsules', JSON.stringify(Array.from(this.unlockedIds)));
+        sessionStorage.setItem('unlocked_capsules', JSON.stringify(Array.from(this.unlockedIds)));
     }
 
     /* 📥 Verileri Supabase veya Yerelden Yükle */
@@ -786,11 +797,15 @@ class TimeCapsuleApp {
         setTimeout(() => toast.remove(), 3500);
     }
 
-            /* 👤 Profil Seçme & PIN Girişi */
+    /* 👤 Profil Seçme & PIN Girişi */
     openProfileModal() {
         // Profil değiştirme veya çıkış için kilit ekranına dön
         this.currentProfile = null;
+        this.unlockedIds = new Set();
+        sessionStorage.removeItem('active_profile_id');
+        sessionStorage.removeItem('unlocked_capsules');
         localStorage.removeItem('active_profile_id');
+        localStorage.removeItem('unlocked_capsules');
         this.updateProfileUI();
     }
 
@@ -832,7 +847,9 @@ class TimeCapsuleApp {
         if (enteredPin === this.selectedProfileForLogin.pin) {
             // 🎉 BAŞARILI GİRİŞ!
             this.currentProfile = this.selectedProfileForLogin;
-            localStorage.setItem('active_profile_id', this.currentProfile.id);
+            // SADECE aktif tarayıcı sekmesi için (sessionStorage) kaydet - kalıcı hafızaya ASLA yazma
+            sessionStorage.setItem('active_profile_id', this.currentProfile.id);
+            localStorage.removeItem('active_profile_id');
 
             // Müzik & Konfeti Efekti
             if (window.romanticAudio) window.romanticAudio.playUnlockSound();
@@ -864,7 +881,11 @@ class TimeCapsuleApp {
 
     logoutProfile() {
         this.currentProfile = null;
+        this.unlockedIds = new Set();
+        sessionStorage.removeItem('active_profile_id');
+        sessionStorage.removeItem('unlocked_capsules');
         localStorage.removeItem('active_profile_id');
+        localStorage.removeItem('unlocked_capsules');
         this.updateProfileUI();
         this.showToast("Oturum kapatıldı.");
     }

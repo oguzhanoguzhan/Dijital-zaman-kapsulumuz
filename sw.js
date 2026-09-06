@@ -1,4 +1,4 @@
-const CACHE_NAME = 'time-capsule-v2';
+const CACHE_NAME = 'time-capsule-v5-force-pin-gate';
 const STATIC_ASSETS = [
     './',
     './index.html',
@@ -28,7 +28,11 @@ self.addEventListener('activate', (e) => {
     e.waitUntil(
         caches.keys().then((keys) => {
             return Promise.all(
-                keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key);
+                    }
+                })
             );
         })
     );
@@ -36,14 +40,21 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-    // Supabase veya harici CDN isteklerini doğrudan ağa bırak
+    // Supabase veya harici istekleri doğrudan ağa bırak
     if (e.request.url.includes('supabase.co') || e.request.url.includes('unsplash.com') || e.request.url.includes('cdnjs.cloudflare.com')) {
         return;
     }
 
+    // Network-First stratejisi (Önce ağdan güncel dosyayı çek, internet yoksa önbellekten ver)
     e.respondWith(
-        caches.match(e.request).then((res) => {
-            return res || fetch(e.request).catch(() => caches.match('./index.html'));
-        })
+        fetch(e.request)
+            .then((networkRes) => {
+                if (networkRes && networkRes.status === 200) {
+                    const resClone = networkRes.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(e.request, resClone));
+                }
+                return networkRes;
+            })
+            .catch(() => caches.match(e.request).then(res => res || caches.match('./index.html')))
     );
 });
